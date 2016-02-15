@@ -8,19 +8,21 @@
 //  points accrued by the student and their letter grade along with basic information about the student.
 
 #include <iostream>
+#include <cctype>
 using std::cout;
 using std::cin;
 using std::string;
 
-//This function takes a string and makes sure it only contains digits.
+//This function takes a string and makes sure it only desired characters.
 string stringValidator(string desiredChars, string inputMsg);
+//This takes a string and makes sure it contains digits and lies between 0 and 300.
+double pointValidator();
 
 int main(int argc, const char * argv[]) {
     string id;
     string lastName;
     string firstName;
-    string points;
-    double pointsMath;//used for calculating percentage.
+    double points;//used for calculating percentage.
     double percentage;//used for calculating letter grade.
     char grade;
     string gradeCommentary;//gives student advice or encouragement based on their letter grade.
@@ -35,15 +37,24 @@ int main(int argc, const char * argv[]) {
     
     id = stringValidator("1234567890", "ID");
     lastName = stringValidator("qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM", "last name");
+    for(int i = 0; i < lastName.length(); i++){//capitalizes last name.
+        lastName[i] = tolower(lastName[i]);
+    }
+    lastName[0] = toupper(lastName[0]);
+    
     firstName = stringValidator("qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM", "first name");
-    points = stringValidator("1234567890.", "points");
-    pointsMath = stod(points);
-    percentage = (pointsMath / 300) * 100;
+    for(int i = 0; i < firstName.length(); i++){//capitalizes first name.
+        firstName[i] = tolower(firstName[i]);
+    }
+    firstName[0] = toupper(firstName[0]);
+    
+    points = pointValidator();
+    percentage = (points / 300) * 100;
     
     cout << "ID: " << id << std::endl;
     cout << "Last Name: " << lastName << std::endl;
     cout << "First Name " << firstName << std::endl;
-    cout << "Points out of 300: " << pointsMath << std::endl;
+    cout << "Points out of 300: " << points << std::endl;
     cout << "Percentage: " << percentage << std::endl;
     
     if (percentage >= 90) {
@@ -74,9 +85,8 @@ int main(int argc, const char * argv[]) {
 }
 
 /*
- This function takes a string and makes sure it only contains digits. DesiredChars is a string representing
- a set of desired characters, which is passed to find_first_not_of. InputMsg is what the user is being asked
- to input (ex. user ID).
+ This function takes a string and makes sure it only contains characters in desiredChars. InputMsg is what
+ the user is being asked to input (ex. user ID).
  Postcondition: Input is returned if all characters are digits. The user is repeatedly asked for input if any
  non-digit characters are found.
  */
@@ -94,6 +104,35 @@ string stringValidator(string desiredChars, string inputMsg){
         }
         else{
             return input;
+        }
+    }
+}
+
+/*
+ This takes a string and makes sure it is a numerical value.
+ It also checks whether it lies between 0 and 300.
+*/
+double pointValidator(){
+    string input;
+    double inputMath;
+    
+    while (true) { //input validation loop
+        //Tells the user that they need to input a certain value.
+        cout << "Please enter total points accrued in CS11, 12, and 21:\n";
+        getline(cin >> std::ws, input);
+        if (input.find_first_not_of("1234567890") == string::npos) {
+            inputMath = stod(input);
+            if (inputMath > 300) {//automatically assigns points to 300 if they exceed 300.
+                inputMath = 300;
+            }
+            else if(inputMath < 0) {//automatically assigns points to 0 if they are less than 0.
+                inputMath = 0;
+            }
+            return inputMath;
+        }
+        else{
+            cout << "The points entered are in an invalid format.\n";
+            continue;
         }
     }
 }
